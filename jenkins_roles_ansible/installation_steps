@@ -1,0 +1,73 @@
+#Steps to Install & Configure Jenkins Server with roles using ansible
+
+Step 1. Create a directory "roles" in main directory where ansible.cfg file is located.
+         mkdir roles
+
+Step 2. Create first role as jenkins_role
+   ansible-galaxy init jenkins_role --offline
+
+Step 3. Go inside the directory jenkins_role, copy & paste the following task in tasks/main.yml
+---
+# tasks file for jenkins_role
+- name: Installing required java
+  yum:
+    name: "{{req_java}}"
+    state: present
+
+- name: Setting default java
+  alternatives:
+    name: java
+    link: /usr/bin/java
+    path: /usr/lib/jvm/{{set_java}}/bin/java
+
+- name: Download Jenkins repo yum URL for  
+  get_url:
+    url: "{{jenkins.repo_URL}}"
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: true
+
+- name: Import GPG Key
+  rpm_key:
+    state: present
+    key: "{{jenkins.gpg_key}}"
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    state: present
+
+- name: Change Jenkins JAVA options
+  lineinfile: 
+    dest=/etc/sysconfig/jenkins
+    regexp=^JENKINS_JAVA_OPTIONS=
+    line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+  become: true
+
+- name: Start Jenkins service and enable on boot
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
+Step 4. Copy & paste the following variables in vars/main.yml
+  
+---
+# vars file for jenkins_role
+
+req_java: java-1.8.0-openjdk
+set_java: jre-1.8.0-openjdk
+
+jenkins:
+  repo_URL: "https://pkg.jenkins.io/redhat/jenkins.repo"
+  gpg_key: "https://pkg.jenkins.io/redhat/jenkins.io.key"
+  JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+
+Step 5: Finally, in main directory create jenkins_ansible.yml & copy & paste the following
+---
+- name: Installing Jenkins server with roles using ansible
+  hosts: web
+  become: no
+  gather_facts: no
+  roles:
+    - jenkins_role 
+
