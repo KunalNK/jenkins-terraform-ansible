@@ -1,0 +1,10 @@
+---
+# vars file for jenkins_role
+
+req_java: java-1.8.0-openjdk
+set_java: jre-1.8.0-openjdk
+
+jenkins:
+  repo_URL: "https://pkg.jenkins.io/redhat/jenkins.repo"
+  gpg_key: "https://pkg.jenkins.io/redhat/jenkins.io.key"
+  JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"

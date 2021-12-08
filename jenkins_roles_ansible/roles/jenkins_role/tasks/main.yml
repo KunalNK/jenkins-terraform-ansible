@@ -1,0 +1,52 @@
+---
+# tasks file for jenkins_role
+- name: Installing required java
+  yum:
+    name: "{{req_java}}"
+    state: present
+
+
+- name: Upgrading all packages
+  yum:
+    name: "*"
+    state: latest
+
+
+- name: Install epel 
+  command: amazon-linux-extras install epel -y
+    
+- name: Setting default java
+  alternatives:
+    name: java
+    link: /usr/bin/java
+    path: /usr/lib/jvm/{{set_java}}/bin/java
+
+- name: Download Jenkins repo yum URL   
+  get_url:
+    url: "{{jenkins.repo_URL}}"
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: true
+
+- name: Import GPG Key
+  rpm_key:
+    state: present
+    key: "{{jenkins.gpg_key}}"
+
+- name: Install Jenkins
+  yum:
+    name: jenkins
+    state: present
+
+- name: Change Jenkins JAVA options
+  lineinfile: 
+    dest=/etc/sysconfig/jenkins
+    regexp=^JENKINS_JAVA_OPTIONS=
+    line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+  become: true
+
+- name: Start Jenkins service and enable on boot
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+
