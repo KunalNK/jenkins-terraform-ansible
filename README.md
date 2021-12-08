@@ -1,9 +1,6 @@
 
 # Automate deployment of passwordless Jenkins server using Terraform & Ansible.
 
-
-
-
 1. Clone the repository:
 
 ```
