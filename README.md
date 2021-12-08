@@ -22,7 +22,7 @@ terraform init
 terraform apply --auto-approve
 
 ```
-4. To access the jenkins server, the copy the ec2-public-ip or ec2-publicdns & paste it in the browser with port number 8080. For example
+4. To access the jenkins server, the copy the ec2-public-ip or ec2-publicdns of your ec2-instance & paste it in the browser with port number 8080. For example
 
 ```
 62.55.96.11:8080
