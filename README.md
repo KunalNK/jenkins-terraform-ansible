@@ -1,6 +1,15 @@
 
 # Automate deployment of passwordless Jenkins server using Terraform & Ansible.
 
+## Prerequisites
+
+```
+1. Terraform tool.
+2. Ansible tool.
+3. AWS CLI tool.
+
+```
+
 1. Clone the repository:
 
 ```
